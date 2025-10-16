@@ -1,0 +1,94 @@
+name: build harbor image
+
+on:
+  push:
+    # branches:
+    #   - 'main'
+
+jobs:
+  build-image-x86:
+    runs-on: ubuntu-latest
+    # runs-on: ubuntu-24.04
+    # runs-on: ubuntu-24.04-arm
+
+    defaults:
+      run:
+        working-directory: ./harbor
+    env:
+      DEVFLAG: false
+      TRIVYFLAG: true
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
+
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v3
+
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
+
+      # - name: Login to Docker Hub
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ vars.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set image tag
+        id: vars
+        run: |
+          set -x
+          echo "VERSIONTAG=`cat VERSION`_${RUNNER_ARCH}" >> $GITHUB_ENV
+
+      # https://goharbor.io/docs/2.14.0/build-customize-contribute/compile-guide/
+      - name: build images
+        run: |
+          set -ex
+          PARM="DEVFLAG=${{ env.DEVFLAG }} \
+            TRIVYFLAG=${{ env.TRIVYFLAG }}"
+          make compile -e ${PARM}
+          make build -e ${PARM}
+
+      - name: push image to Docker Hub
+        run: |
+          set -ex
+          PARM="DEVFLAG=${{ env.DEVFLAG }} \
+            TRIVYFLAG=${{ env.TRIVYFLAG }} \
+            REGISTRYUSER=${{ vars.DOCKERHUB_USERNAME }} \
+            REGISTRYPASSWORD=${{ secrets.DOCKERHUB_TOKEN }} \
+            REGISTRYSERVER=docker.io/ \
+            IMAGENAMESPACE=${{ vars.DOCKERHUB_USERNAME }} "
+
+          make pushimage -e ${PARM}
+
+        # env:
+        #   REGISTRYUSER: ${{ vars.DOCKERHUB_USERNAME }}
+        #   REGISTRYPASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+        #   REGISTRYSERVER: docker.io/
+        #   IMAGENAMESPACE: ${{ vars.DOCKERHUB_USERNAME }}
+
+      - name: push image to GitHub Container Registry
+        run: |
+          set -ex
+          PARM="DEVFLAG=${{ env.DEVFLAG }} \
+            TRIVYFLAG=${{ env.TRIVYFLAG }} \
+            REGISTRYUSER=${{ vars.DOCKERHUB_USERNAME }} \
+            REGISTRYPASSWORD=${{ secrets.DOCKERHUB_TOKEN }} \
+            REGISTRYSERVER=ghcr.io/ \
+            IMAGENAMESPACE=${{ vars.DOCKERHUB_USERNAME }} "
+
+          make pushimage -e ${PARM}
+        # env:
+        #   REGISTRYUSER: ${{ github.actor }}
+        #   REGISTRYPASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        #   REGISTRYSERVER: ghcr.io/
+        #   IMAGENAMESPACE: ${{ env.GITHUB_ACTION_REPOSITORY }}
+
+      - name: debug
+        run: |
+          docker images

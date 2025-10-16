@@ -1,0 +1,156 @@
+name: Docker publish
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  docker-base-image:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component:
+          # - trivy-adapter
+          - core
+          # - db
+          # - exporter
+          # - jobservice
+          # - log
+          # - nginx
+          # - portal
+          # - prepare
+          # - redis
+          # - registry
+          # - registryctl
+
+    permissions:
+      contents: read
+      packages: write
+
+    defaults:
+      run:
+        working-directory: ./harbor
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-buildx-action@v2
+        with:
+          driver: docker-container
+          driver-opts: network=host
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # - run: cd .. && make patch
+
+      - id: prepare
+        run: echo "tag=dev"  >> $GITHUB_ENV
+
+      - name: Build base image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./harbor
+          file: ./harbor/make/photon/${{ matrix.component }}/Dockerfile.base
+          platforms: linux/amd64,linux/arm64
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ env.tag }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ghcr.io/${{ github.repository }}/harbor-${{ matrix.component }}-base:${{ env.tag }}
+
+  docker-image:
+    needs:
+      - docker-base-image
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        component:
+          # - prepare
+          # - db
+          # - portal
+          - core
+          # - jobservice
+          # - log
+          # - nginx
+          # - registryctl
+          # - trivy_adapter
+          # - redis
+          # - standalone_db_migrator
+          # - exporter
+
+    defaults:
+      run:
+        working-directory: ./harbor
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '^1.20.x'
+
+      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-buildx-action@v2
+        with:
+          driver: docker-container
+          driver-opts: network=host
+
+      # - run: cd .. && make patch
+
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: prepare
+        run: echo "tag=dev" >> $GITHUB_ENV
+
+      - name: Build & Publish images
+        env:
+          IMAGENAMESPACE: ghcr.io/${{ github.repository }}
+          BASEIMAGENAMESPACE: ghcr.io/${{ github.repository }}
+          IMAGELABELS: org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          MULTIARCH: true
+          TRIVYFLAG: true
+          CHARTFLAG: true
+          NOTARYFLAG: true
+        run: |
+          set -eux;
+
+          CTX="BUILDBIN=true VERSIONTAG=${{ env.tag }} BASEIMAGETAG=${{ env.tag }} MULTIARCH=${MULTIARCH} IMAGENAMESPACE=${IMAGENAMESPACE} BASEIMAGENAMESPACE=${BASEIMAGENAMESPACE} TRIVYFLAG=${TRIVYFLAG} CHARTFLAG=${CHARTFLAG} NOTARYFLAG=${CHARTFLAG} IMAGELABELS=${IMAGELABELS}"
+
+          make versions_prepare ${CTX};
+
+          case ${{ matrix.component }} in
+            core)                   make compile_core ${CTX} ;;
+            jobservice)             make compile_jobservice ${CTX};;
+            registryctl)            make compile_registryctl ${CTX};;
+            standalone_db_migrator) make compile_standalone_db_migrator ${CTX} ;;
+          esac;
+
+          case ${{ matrix.component }} in
+            exporter)    make build BUILDTARGET="_compile_and_build_exporter" ${CTX} ;;
+            registryctl) make build BUILDTARGET="_build_registry _build_registryctl" ${CTX} ;;
+            *)           make build BUILDTARGET="_build_${{ matrix.component }}" ${CTX} ;;
+          esac;
+
+      - name: debug
+        run: |
+          docker images
