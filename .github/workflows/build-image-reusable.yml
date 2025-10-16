@@ -1,0 +1,70 @@
+name: Reusable Build Harbor Image
+
+on:
+  workflow_call:
+    inputs:
+      arch:
+        required: true
+        type: string
+jobs:
+  build-image:
+    runs-on: ubuntu-24.04${{ inputs.arch == 'arm64' && '-arm' || '' }}
+    defaults:
+      run:
+        working-directory: ./harbor
+    env:
+      DEVFLAG: false
+      TRIVYFLAG: true
+      PULL_BASE_FROM_DOCKERHUB: false 
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
+
+      - name: checkout harbor version
+        run: |
+          set -ex
+          git fetch --all --tags --unshallow
+          git checkout v2.14.0
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set image tag
+        id: vars
+        run: |
+          set -ex
+          echo "VERSIONTAG=${GITHUB_REF_NAME}_${{ inputs.arch }}" >> $GITHUB_ENV
+
+      - name: patch docker build parameters
+        run: |
+          # add label org.opencontainers.image.source = https://github.com/${{ github.repository }}
+          sed -i 's|^DOCKERBUILD=$(DOCKERCMD) build --no-cache --network=$(DOCKERNETWORK)|DOCKERBUILD=$(DOCKERCMD) build --no-cache --network=$(DOCKERNETWORK) --label https://github.com/${{ github.repository }} |g' make/photon/Makefile
+
+      - name: build images
+        run: |
+          set -e
+          PARM="DEVFLAG=${{ env.DEVFLAG }} \
+            TRIVYFLAG=${{ env.TRIVYFLAG }} \
+            PULL_BASE_FROM_DOCKERHUB=${{ env.PULL_BASE_FROM_DOCKERHUB }} \
+            IMAGENAMESPACE=ghcr.io/${GITHUB_REPOSITORY}"
+          make compile -e ${PARM}
+          make build -e ${PARM}
+
+      - name: debug
+        run: |
+          docker images
+
+      - name: push image to GitHub Container Registry
+        run: |
+          set -e
+          images=(nginx-photon harbor-portal harbor-core harbor-jobservice registry-photon harbor-registryctl trivy-adapter-photon harbor-db redis-photon harbor-exporter)
+
+          for image in ${images[@]}; do
+            docker push ghcr.io/${GITHUB_REPOSITORY}/${image}:${VERSIONTAG}
+          done
