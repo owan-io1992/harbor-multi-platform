@@ -1,0 +1,64 @@
+name: Check for New Release from goharbor/harbor
+
+on:
+  workflow_dispatch: # Allow manual trigger
+  schedule:
+    - cron: '0 * * * *' # Run every hour
+
+jobs:
+  check-release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+
+      # Step 1: Get the latest release tag from goharbor/harbor (Repo A)
+      - name: Get latest release from goharbor/harbor
+        id: get_latest_release
+        run: |
+          LATEST_TAG=$(curl -sL \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/goharbor/harbor/releases/latest | jq -r ".tag_name")
+          echo "Latest release tag from Repo A is: $LATEST_TAG"
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+      # Step 2: Get the last known release tag from the current repository (Repo B)
+      - name: Get last known release from current repository
+        id: get_last_known_release
+        run: |
+          if [ -f .latest_release_tag ]; then
+            LAST_KNOWN_TAG=$(cat .latest_release_tag)
+          else
+            LAST_KNOWN_TAG=""
+          fi
+          echo "Last known release tag in Repo B is: $LAST_KNOWN_TAG"
+          echo "last_known_tag=$LAST_KNOWN_TAG" >> $GITHUB_OUTPUT
+
+      # Step 3: Compare tags and run actions if a new release is found
+      - name: Create Release if new tag is found
+        if: steps.get_latest_release.outputs.latest_tag != steps.get_last_known_release.outputs.last_known_tag && steps.get_latest_release.outputs.latest_tag != ''
+        uses: actions/create-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_latest_release.outputs.latest_tag }}
+          release_name: Release ${{ steps.get_latest_release.outputs.latest_tag }}
+          body: ""
+          draft: false
+          prerelease: false
+
+      # Step 4: If a new release is found, update the last known release tag file in the repository
+      - name: Update last known release tag
+        if: steps.get_latest_release.outputs.latest_tag != steps.get_last_known_release.outputs.last_known_tag && steps.get_latest_release.outputs.latest_tag != ''
+        run: |
+          echo "${{ steps.get_latest_release.outputs.latest_tag }}" > .latest_release_tag
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .latest_release_tag
+          git commit -m "Update last known release to ${{ steps.get_latest_release.outputs.latest_tag }}" || echo "No changes to commit"
+          git push
