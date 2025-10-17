@@ -46,18 +46,18 @@ jobs:
           # add label org.opencontainers.image.source = https://github.com/${{ github.repository }}
           sed -i 's|^DOCKERBUILD=$(DOCKERCMD) build --no-cache --network=$(DOCKERNETWORK)|DOCKERBUILD=$(DOCKERCMD) build --no-cache --network=$(DOCKERNETWORK) --label https://github.com/${{ github.repository }} |g' make/photon/Makefile
 
-      # need before v2.13.0
-      - name: patch swagger dockerfile
-        run: |
-          sed -i '/RUN curl -fsSL/i \ARG BUILDARCH' tools/swagger/Dockerfile
-          sed -i 's|swagger_linux_amd64|swagger_linux_${BUILDARCH}|g' tools/swagger/Dockerfile
+      # # need before v2.13.0
+      # - name: patch swagger dockerfile
+      #   run: |
+      #     sed -i '/RUN curl -fsSL/i \ARG BUILDARCH' tools/swagger/Dockerfile
+      #     sed -i 's|swagger_linux_amd64|swagger_linux_${BUILDARCH}|g' tools/swagger/Dockerfile
 
-      # need before v2.12.0
-      - name: patch spectral dockerfile
-        run: |
-          git config --global user.email "${GITHUB_ACTOR}@example.com"
-          git config --global user.name "${GITHUB_ACTOR}"
-          git cherry-pick d42c34786f247f0913b1cd03c2f58217e24dd144
+      # # need before v2.12.0
+      # - name: patch spectral dockerfile
+      #   run: |
+      #     git config --global user.email "${GITHUB_ACTOR}@example.com"
+      #     git config --global user.name "${GITHUB_ACTOR}"
+      #     git cherry-pick d42c34786f247f0913b1cd03c2f58217e24dd144
 
       - name: build images
         run: |
