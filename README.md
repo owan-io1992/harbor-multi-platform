@@ -2,6 +2,23 @@
 
 This project provides multi-platform container images for Harbor.
 
+image avaliable in Docker Hub and GitHub Container Registry
+
+| Image | Docker Hub | GitHub Container Registry |
+| :--- | :--- | :--- |
+| nginx-photon | [owanio1992/nginx-photon](https://hub.docker.com/repository/docker/owanio1992/nginx-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/nginx-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fnginx-photon) |
+| harbor-portal | [owanio1992/harbor-portal](https://hub.docker.com/repository/docker/owanio1992/harbor-portal) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-portal](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-portal) |
+| harbor-core | [owanio1992/harbor-core](https://hub.docker.com/repository/docker/owanio1992/harbor-core) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-core](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-core) |
+| harbor-jobservice | [owanio1992/harbor-jobservice](https://hub.docker.com/repository/docker/owanio1992/harbor-jobservice) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-jobservice](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-jobservice) |
+| registry-photon | [owanio1992/registry-photon](https://hub.docker.com/repository/docker/owanio1992/registry-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/registry-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fregistry-photon) |
+| harbor-registryctl | [owanio1992/harbor-registryctl](https://hub.docker.com/repository/docker/owanio1992/harbor-registryctl) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-registryctl](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-registryctl) |
+| trivy-adapter-photon | [owanio1992/trivy-adapter-photon](https://hub.docker.com/repository/docker/owanio1992/trivy-adapter-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/trivy-adapter-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Ftrivy-adapter-photon) |
+| harbor-db | [owanio1992/harbor-db](https://hub.docker.com/repository/docker/owanio1992/harbor-db) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-db](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-db) |
+| redis-photon | [owanio1992/redis-photon](https://hub.docker.com/repository/docker/owanio1992/redis-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/redis-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fredis-photon) |
+| harbor-exporter | [owanio1992/harbor-exporter](https://hub.docker.com/repository/docker/owanio1992/harbor-exporter) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-exporter](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-exporter) |
+
+
+
 ## How to Use
 
 ### Docker Compose (via Installer)

@@ -70,5 +70,5 @@ jobs:
           images=(nginx-photon harbor-portal harbor-core harbor-jobservice registry-photon harbor-registryctl trivy-adapter-photon harbor-db redis-photon harbor-exporter)
 
           for image in ${images[@]}; do
-            skopeo copy docker://ghcr.io/${GITHUB_REPOSITORY}/${image}:${VERSIONTAG} docker://docker.io/${{ vars.DOCKERHUB_USERNAME }}/${image}:${VERSIONTAG}
+            skopeo copy --multi-arch all docker://ghcr.io/${GITHUB_REPOSITORY}/${image}:${VERSIONTAG} docker://docker.io/${{ vars.DOCKERHUB_USERNAME }}/${image}:${VERSIONTAG}
           done
