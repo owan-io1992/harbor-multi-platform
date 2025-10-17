@@ -4,7 +4,7 @@ on:
   push:
   workflow_dispatch: # Allow manual trigger
   schedule:
-    - cron: '31 * * * *' # Run every hour
+    - cron: '0 */12 * * *' # Run every hour
 
 jobs:
   check-release:
