@@ -19,6 +19,14 @@ image avaliable in Docker Hub and GitHub Container Registry
 
 
 
+## Release
+
+This project automatically checks for new releases from `goharbor/harbor` every 12 hours. If a new release is found, a corresponding multi-platform image release will be created automatically.
+
+## Support
+
+Currently, only releases from version 2.13 and later are supported.
+
 ## How to Use
 
 ### Docker Compose (via Installer)
