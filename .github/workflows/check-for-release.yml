@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout current repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # Step 1: Get the latest release tag from goharbor/harbor (Repo A)
       - name: Get latest release from goharbor/harbor
@@ -46,6 +46,7 @@ jobs:
         if: steps.check_tag.outputs.exists == 'false'
         uses: softprops/action-gh-release@v2
         with:
+          token: ${{ secrets.REPO_PAT }} # Use a PAT to trigger subsequent workflows
           tag_name: ${{ steps.get_latest_release.outputs.latest_tag }}
           name: Release ${{ steps.get_latest_release.outputs.latest_tag }}
           body: ""
