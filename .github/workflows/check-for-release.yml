@@ -2,7 +2,7 @@ name: Check for New Release from goharbor/harbor
 
 on:
   schedule:
-    - cron: '0 */12 * * *' # Run every hour
+    - cron: '0 */12 * * *'
 
 jobs:
   check-release:
@@ -15,7 +15,6 @@ jobs:
       - name: Checkout current repository
         uses: actions/checkout@v5
 
-      # Step 1: Get the latest release tag from goharbor/harbor (Repo A)
       - name: Get latest release from goharbor/harbor
         id: get_latest_release
         run: |
@@ -26,7 +25,6 @@ jobs:
           echo "Latest release tag from Repo A is: $LATEST_TAG"
           echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
-      # Step 2: Check if the latest tag from goharbor/harbor already exists in this repository
       - name: Check if tag exists
         id: check_tag
         if: steps.get_latest_release.outputs.latest_tag != ''
