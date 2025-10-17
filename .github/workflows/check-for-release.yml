@@ -1,0 +1,54 @@
+name: Check for New Release from goharbor/harbor
+
+on:
+  push:
+  workflow_dispatch: # Allow manual trigger
+  schedule:
+    - cron: '0 */12 * * *' # Run every hour
+
+jobs:
+  check-release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v5
+
+      # Step 1: Get the latest release tag from goharbor/harbor (Repo A)
+      - name: Get latest release from goharbor/harbor
+        id: get_latest_release
+        run: |
+          LATEST_TAG=$(curl -sL \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/goharbor/harbor/releases/latest | jq -r ".tag_name")
+          echo "Latest release tag from Repo A is: $LATEST_TAG"
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+      # Step 2: Check if the latest tag from goharbor/harbor already exists in this repository
+      - name: Check if tag exists
+        id: check_tag
+        if: steps.get_latest_release.outputs.latest_tag != ''
+        run: |
+          git fetch --tags
+          if git tag | grep -q "^${{ steps.get_latest_release.outputs.latest_tag }}$"; then
+            echo "Tag ${{ steps.get_latest_release.outputs.latest_tag }} already exists."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Tag ${{ steps.get_latest_release.outputs.latest_tag }} does not exist."
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Release if new tag is found and does not exist
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.REPO_PAT }} # Use a PAT to trigger subsequent workflows
+          tag_name: ${{ steps.get_latest_release.outputs.latest_tag }}
+          name: Release ${{ steps.get_latest_release.outputs.latest_tag }}
+          body: ""
+          draft: false
+          prerelease: false
