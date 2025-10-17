@@ -43,7 +43,7 @@ jobs:
       # Step 3: Compare tags and run actions if a new release is found
       - name: Create Release if new tag is found
         if: steps.get_latest_release.outputs.latest_tag != steps.get_last_known_release.outputs.last_known_tag && steps.get_latest_release.outputs.latest_tag != ''
-        uses: actions/create-release@v2
+        uses: comnoco/create-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
