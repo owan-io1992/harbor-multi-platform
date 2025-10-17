@@ -56,7 +56,7 @@ jobs:
           make compile -e ${PARM}
           make build -e ${PARM}
 
-      - name: debug
+      - name: list build images
         run: |
           docker images
 

@@ -1,9 +1,8 @@
 name: Build and Merge Harbor Images
 
 on:
-  push:
-    branches:
-      - "main"
+  # push:
+
   release:
     types: [created]
 
