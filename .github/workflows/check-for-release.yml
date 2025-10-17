@@ -3,7 +3,7 @@ name: Check for New Release from goharbor/harbor
 on:
   workflow_dispatch: # Allow manual trigger
   schedule:
-    - cron: '0 * * * *' # Run every hour
+    - cron: '31 * * * *' # Run every hour
 
 jobs:
   check-release:
