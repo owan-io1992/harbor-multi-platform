@@ -15,7 +15,7 @@ jobs:
     env:
       DEVFLAG: false
       TRIVYFLAG: true
-      PULL_BASE_FROM_DOCKERHUB: false 
+      PULL_BASE_FROM_DOCKERHUB: false
 
     steps:
       - uses: actions/checkout@v5
