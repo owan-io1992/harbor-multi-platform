@@ -41,6 +41,19 @@ jobs:
           set -ex
           echo "VERSIONTAG=${GITHUB_REF_NAME}_${{ inputs.arch }}" >> $GITHUB_ENV
 
+      # need before v2.12.0
+      - name: patch spectral dockerfile
+        run: |
+          git config --global user.email "${GITHUB_ACTOR}@example.com"
+          git config --global user.name "${GITHUB_ACTOR}"
+          git cherry-pick d42c34786f247f0913b1cd03c2f58217e24dd144
+
+      # need before v2.13.0
+      - name: patch swagger dockerfile
+        run: |
+          sed -i '/RUN curl -fsSL/i \ARG BUILDARCH' tools/swagger/Dockerfile
+          sed -i 's|swagger_linux_amd64|swagger_linux_${BUILDARCH}|g' tools/swagger/Dockerfile
+
       - name: patch build parameters
         run: |
           # add label org.opencontainers.image.source = https://github.com/${{ github.repository }}
@@ -56,19 +69,6 @@ jobs:
               ;;
           esac
           sed -i "s|\(trivy_.*_Linux-\)64bit\(.tar.gz\)|\1${TRIVY_ARCH}\2|" Makefile
-
-      # need before v2.13.0
-      - name: patch swagger dockerfile
-        run: |
-          sed -i '/RUN curl -fsSL/i \ARG BUILDARCH' tools/swagger/Dockerfile
-          sed -i 's|swagger_linux_amd64|swagger_linux_${BUILDARCH}|g' tools/swagger/Dockerfile
-
-      # # need before v2.12.0
-      # - name: patch spectral dockerfile
-      #   run: |
-      #     git config --global user.email "${GITHUB_ACTOR}@example.com"
-      #     git config --global user.name "${GITHUB_ACTOR}"
-      #     git cherry-pick d42c34786f247f0913b1cd03c2f58217e24dd144
 
       - name: build images
         run: |
