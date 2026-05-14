@@ -57,6 +57,12 @@ jobs:
           esac
           sed -i "s|\(trivy_.*_Linux-\)64bit\(.tar.gz\)|\1${TRIVY_ARCH}\2|" Makefile
 
+          # goharbor/photon is amd64-only; replace with official multi-arch photon image on arm64
+          if [ "${{ inputs.arch }}" = "arm64" ]; then
+            find make/photon -name "Dockerfile.base" \
+              -exec sed -i 's|FROM goharbor/photon:|FROM photon:|g' {} \;
+          fi
+
       # # need before v2.13.0
       # - name: patch swagger dockerfile
       #   run: |
