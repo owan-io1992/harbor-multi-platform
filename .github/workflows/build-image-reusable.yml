@@ -60,7 +60,7 @@ jobs:
           # goharbor/photon is amd64-only; replace with official multi-arch photon image on arm64
           if [ "${{ inputs.arch }}" = "arm64" ]; then
             find make/photon -name "Dockerfile.base" \
-              -exec sed -i 's|FROM goharbor/photon:|FROM photon:|g' {} \;
+              -exec sed -i -E 's|FROM goharbor/photon:[^ ]+|FROM photon:5.0|g' {} \;
 
             # redis 7.2.x (pinned as redis-7.2.11-1.1.1.ph5) is not in the public photon repos;
             # use valkey instead, which ships redis-server/redis-cli symlinks
