@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#MISE description="Check out a Harbor tag and apply patches without building"
+#USAGE flag "--harbor-version <version>" help="Harbor release tag, e.g. v2.15.3" required=#true
+#USAGE flag "--arch <arch>" help="x64, arm64 or auto (default: host)" default="auto"
+
+exec scripts/build.sh \
+  --harbor-version "${usage_harbor_version:?}" \
+  --arch "${usage_arch:-auto}" \
+  --prepare-only

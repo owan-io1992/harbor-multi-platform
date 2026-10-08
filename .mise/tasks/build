@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#MISE description="Build Harbor images locally for a Harbor release tag"
+#USAGE flag "--harbor-version <version>" help="Harbor release tag, e.g. v2.15.3" required=#true
+#USAGE flag "--arch <arch>" help="x64, arm64 or auto (default: host)" default="auto"
+#USAGE flag "--namespace <ns>" help="Image namespace for built images" default="local"
+
+exec scripts/build.sh \
+  --harbor-version "${usage_harbor_version:?}" \
+  --arch "${usage_arch:-auto}" \
+  --namespace "${usage_namespace:-local}"

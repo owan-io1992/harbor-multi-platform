@@ -1,0 +1,5 @@
+# Tools for working on this repo. Docker, make, git and curl are system prerequisites
+# (the build runs Go/Node inside Docker containers), so mise does not manage them.
+# Tasks live in .mise/tasks/ as file tasks.
+[tools]
+shellcheck = "latest"
