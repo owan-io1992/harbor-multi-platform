@@ -64,7 +64,9 @@ jobs:
 
             # redis 7.2.x (pinned as redis-7.2.11-1.1.1.ph5) is not in the public photon repos;
             # use valkey instead, which ships redis-server/redis-cli symlinks
-            sed -i 's|tdnf install -y redis\(-[^ ]*\)\?|tdnf install -y valkey|' make/photon/redis/Dockerfile.base
+            if [ -f make/photon/redis/Dockerfile.base ]; then
+              sed -i 's|tdnf install -y redis\(-[^ ]*\)\?|tdnf install -y valkey|' make/photon/redis/Dockerfile.base
+            fi
           fi
 
       - name: build images
@@ -84,7 +86,11 @@ jobs:
       - name: push image to GitHub Container Registry
         run: |
           set -e
-          images=(nginx-photon harbor-portal harbor-core harbor-jobservice registry-photon harbor-registryctl trivy-adapter-photon harbor-db redis-photon harbor-exporter)
+          CACHE_SERVICE="redis-photon"
+          if [ -d make/photon/valkey ]; then
+            CACHE_SERVICE="valkey-photon"
+          fi
+          images=(nginx-photon harbor-portal harbor-core harbor-jobservice registry-photon harbor-registryctl trivy-adapter-photon harbor-db "${CACHE_SERVICE}" harbor-exporter)
 
           for image in ${images[@]}; do
             docker push ghcr.io/${GITHUB_REPOSITORY}/${image}:${VERSIONTAG}

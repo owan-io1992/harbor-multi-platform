@@ -32,6 +32,17 @@ jobs:
       packages: write
 
     steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
+
+      - name: checkout harbor version
+        run: |
+          set -ex
+          cd ./harbor
+          git fetch --all --tags --unshallow
+          git checkout ${GITHUB_REF_NAME}
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -48,7 +59,11 @@ jobs:
       - name: Merge image manifest in GitHub Container Registry
         run: |
           set -ex
-          images=(nginx-photon harbor-portal harbor-core harbor-jobservice registry-photon harbor-registryctl trivy-adapter-photon harbor-db redis-photon harbor-exporter)
+          CACHE_SERVICE="redis-photon"
+          if [ -d ./harbor/make/photon/valkey ]; then
+            CACHE_SERVICE="valkey-photon"
+          fi
+          images=(nginx-photon harbor-portal harbor-core harbor-jobservice registry-photon harbor-registryctl trivy-adapter-photon harbor-db "${CACHE_SERVICE}" harbor-exporter)
 
           for image in ${images[@]}; do
             docker manifest create ghcr.io/${GITHUB_REPOSITORY}/${image}:${VERSIONTAG} \
@@ -66,7 +81,11 @@ jobs:
       - name: copy image to Docker Hub
         run: |
           set -ex
-          images=(nginx-photon harbor-portal harbor-core harbor-jobservice registry-photon harbor-registryctl trivy-adapter-photon harbor-db redis-photon harbor-exporter)
+          CACHE_SERVICE="redis-photon"
+          if [ -d ./harbor/make/photon/valkey ]; then
+            CACHE_SERVICE="valkey-photon"
+          fi
+          images=(nginx-photon harbor-portal harbor-core harbor-jobservice registry-photon harbor-registryctl trivy-adapter-photon harbor-db "${CACHE_SERVICE}" harbor-exporter)
 
           for image in ${images[@]}; do
             skopeo copy --multi-arch all docker://ghcr.io/${GITHUB_REPOSITORY}/${image}:${VERSIONTAG} docker://docker.io/${{ vars.DOCKERHUB_USERNAME }}/${image}:${VERSIONTAG}
