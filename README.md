@@ -1,21 +1,28 @@
-# Harbor Multi-Platform
+# Harbor Multi-Platform Container Images (ARM64 & AMD64)
 
-This project provides multi-platform container images for Harbor.
+[![Build and Merge Harbor Images](https://github.com/owan-io1992/harbor-multi-platform/actions/workflows/build-and-merge.yml/badge.svg)](https://github.com/owan-io1992/harbor-multi-platform/actions/workflows/build-and-merge.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/owan-io1992/harbor-multi-platform)](https://github.com/owan-io1992/harbor-multi-platform/releases)
+[![Platform](https://img.shields.io/badge/platform-linux%2Farm64%20%7C%20linux%2Famd64-blue)](https://github.com/owan-io1992/harbor-multi-platform)
 
-image avaliable in Docker Hub and GitHub Container Registry
+Pre-built multi-platform container images for [Project Harbor](https://goharbor.io/) supporting both **ARM64 (aarch64 / Apple Silicon / AWS Graviton / Raspberry Pi)** and **AMD64 (x86_64)** architectures.
 
-| Image | Docker Hub | GitHub Container Registry |
-| :--- | :--- | :--- |
-| nginx-photon | [owanio1992/nginx-photon](https://hub.docker.com/repository/docker/owanio1992/nginx-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/nginx-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fnginx-photon) |
-| harbor-portal | [owanio1992/harbor-portal](https://hub.docker.com/repository/docker/owanio1992/harbor-portal) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-portal](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-portal) |
-| harbor-core | [owanio1992/harbor-core](https://hub.docker.com/repository/docker/owanio1992/harbor-core) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-core](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-core) |
-| harbor-jobservice | [owanio1992/harbor-jobservice](https://hub.docker.com/repository/docker/owanio1992/harbor-jobservice) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-jobservice](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-jobservice) |
-| registry-photon | [owanio1992/registry-photon](https://hub.docker.com/repository/docker/owanio1992/registry-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/registry-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fregistry-photon) |
-| harbor-registryctl | [owanio1992/harbor-registryctl](https://hub.docker.com/repository/docker/owanio1992/harbor-registryctl) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-registryctl](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-registryctl) |
-| trivy-adapter-photon | [owanio1992/trivy-adapter-photon](https://hub.docker.com/repository/docker/owanio1992/trivy-adapter-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/trivy-adapter-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Ftrivy-adapter-photon) |
-| harbor-db | [owanio1992/harbor-db](https://hub.docker.com/repository/docker/owanio1992/harbor-db) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-db](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-db) |
-| redis-photon | [owanio1992/redis-photon](https://hub.docker.com/repository/docker/owanio1992/redis-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/redis-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fredis-photon) |
-| harbor-exporter | [owanio1992/harbor-exporter](https://hub.docker.com/repository/docker/owanio1992/harbor-exporter) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-exporter](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-exporter) |
+Images are published to both **GitHub Container Registry (GHCR)** and **Docker Hub**.
+
+## Images
+
+| Image | Docker Hub | GitHub Container Registry | Note |
+| :--- | :--- | :--- | :--- |
+| nginx-photon | [owanio1992/nginx-photon](https://hub.docker.com/repository/docker/owanio1992/nginx-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/nginx-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fnginx-photon) | Reverse proxy |
+| harbor-portal | [owanio1992/harbor-portal](https://hub.docker.com/repository/docker/owanio1992/harbor-portal) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-portal](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-portal) | Web UI |
+| harbor-core | [owanio1992/harbor-core](https://hub.docker.com/repository/docker/owanio1992/harbor-core) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-core](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-core) | Core service |
+| harbor-jobservice | [owanio1992/harbor-jobservice](https://hub.docker.com/repository/docker/owanio1992/harbor-jobservice) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-jobservice](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-jobservice) | Job service |
+| registry-photon | [owanio1992/registry-photon](https://hub.docker.com/repository/docker/owanio1992/registry-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/registry-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fregistry-photon) | OCI Registry |
+| harbor-registryctl | [owanio1992/harbor-registryctl](https://hub.docker.com/repository/docker/owanio1992/harbor-registryctl) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-registryctl](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-registryctl) | Registry controller |
+| trivy-adapter-photon | [owanio1992/trivy-adapter-photon](https://hub.docker.com/repository/docker/owanio1992/trivy-adapter-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/trivy-adapter-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Ftrivy-adapter-photon) | Trivy scanner adapter |
+| harbor-db | [owanio1992/harbor-db](https://hub.docker.com/repository/docker/owanio1992/harbor-db) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-db](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-db) | PostgreSQL database |
+| redis-photon | [owanio1992/redis-photon](https://hub.docker.com/repository/docker/owanio1992/redis-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/redis-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fredis-photon) | Redis cache (Harbor <= v2.14) |
+| valkey-photon | [owanio1992/valkey-photon](https://hub.docker.com/repository/docker/owanio1992/valkey-photon) | [ghcr.io/owan-io1992/harbor-multi-platform/valkey-photon](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fvalkey-photon) | Valkey cache (Harbor >= v2.15) |
+| harbor-exporter | [owanio1992/harbor-exporter](https://hub.docker.com/repository/docker/owanio1992/harbor-exporter) | [ghcr.io/owan-io1992/harbor-multi-platform/harbor-exporter](https://github.com/owan-io1992/harbor-multi-platform/pkgs/container/harbor-multi-platform%2Fharbor-exporter) | Prometheus metrics exporter |
 
 
 
@@ -89,6 +96,8 @@ database:
 redis:
   internal:
     image:
+      # For Harbor <= v2.14: redis-photon
+      # For Harbor >= v2.15: valkey-photon
       repository: ghcr.io/owan-io1992/harbor-multi-platform/redis-photon
 
 exporter:
